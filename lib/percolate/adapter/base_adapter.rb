@@ -14,5 +14,10 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 
-require "percolate/percolator"
-require "percolate/version"
+module Percolate
+  module Adapter
+    # A base class to build off of.
+    class BaseAdapter
+    end
+  end
+end

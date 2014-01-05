@@ -32,6 +32,7 @@ Gem::Specification.new do |s|
   s.description = "Percolate is a library for organizing and distributing configuration settings. It contains" \
     " adapters for frameworks like Chef, with which the user can take full advantage of a declarative syntax for Chef" \
     " data bags and avoid the antipattern of representing initialization state with node attributes."
+  s.add_runtime_dependency "activesupport", ">= 4.0.2"
   s.files = Pathname.glob("lib/**/*.rb").concat(Pathname.glob("bin/*")).map { |f| f.to_s }
   s.test_files = Pathname.glob("{features,spec,test}/*").map { |f| f.to_s }
   s.executables = Pathname.glob("bin/*").map { |f| f.basename.to_s }

@@ -14,5 +14,15 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 
-require "percolate/percolator"
-require "percolate/version"
+require "percolate/adapter/base_adapter"
+
+require "spec_helper"
+
+describe Percolate do
+  it "finds adapters by the naming convention" do
+    percolator = Percolate.create(:base)
+
+    expect(percolator).to be_an_instance_of Percolate::Percolator
+    expect(percolator.adapter).to be_an_instance_of Percolate::Adapter::BaseAdapter
+  end
+end
