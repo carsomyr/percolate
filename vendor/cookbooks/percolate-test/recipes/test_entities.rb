@@ -14,15 +14,11 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 
-source "https://rubygems.org"
+node.default["testing"] = {}
 
-# Resolve dependencies from the gemspec for development convenience.
-gemspec
+node.default["testing"]["entities-all"] = Hash[data_bag("entities").map do |item_name|
+  content = data_bag_item("entities", item_name).raw_data
+  content.delete("id")
 
-gem "chef"
-gem "chefspec"
-gem "librarian-chef"
-gem "rake"
-gem "redcarpet"
-gem "rspec"
-gem "yard"
+  [item_name, content]
+end]

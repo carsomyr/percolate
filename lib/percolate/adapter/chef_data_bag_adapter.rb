@@ -14,15 +14,12 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 
-source "https://rubygems.org"
+require "percolate/adapter/base_adapter"
 
-# Resolve dependencies from the gemspec for development convenience.
-gemspec
-
-gem "chef"
-gem "chefspec"
-gem "librarian-chef"
-gem "rake"
-gem "redcarpet"
-gem "rspec"
-gem "yard"
+module Percolate
+  module Adapter
+    # An adapter for loading from Chef data bags.
+    class ChefDataBagAdapter < BaseAdapter
+    end
+  end
+end

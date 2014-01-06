@@ -1,5 +1,6 @@
 /.bundle/
 /.idea/
+/.librarian/
 /.yardoc/
 /doc/
 /vendor/bundle/

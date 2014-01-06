@@ -14,15 +14,7 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 
-source "https://rubygems.org"
+site "http://community.opscode.com/api/v1"
 
-# Resolve dependencies from the gemspec for development convenience.
-gemspec
-
-gem "chef"
-gem "chefspec"
-gem "librarian-chef"
-gem "rake"
-gem "redcarpet"
-gem "rspec"
-gem "yard"
+cookbook "percolate-test",
+         :path => "vendor/cookbooks/percolate-test"

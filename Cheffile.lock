@@ -1,0 +1,8 @@
+PATH
+  remote: vendor/cookbooks/percolate-test
+  specs:
+    percolate-test (0.9.0)
+
+DEPENDENCIES
+  percolate-test (>= 0)
+

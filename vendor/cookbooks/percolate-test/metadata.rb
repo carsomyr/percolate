@@ -14,15 +14,11 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 
-source "https://rubygems.org"
+spec = Gem::Specification.find_by_name("percolate")
 
-# Resolve dependencies from the gemspec for development convenience.
-gemspec
-
-gem "chef"
-gem "chefspec"
-gem "librarian-chef"
-gem "rake"
-gem "redcarpet"
-gem "rspec"
-gem "yard"
+maintainer spec.authors.join(", ")
+maintainer_email spec.email.join(", ")
+license spec.licenses.join(", ")
+description "The Percolate test cookbook"
+long_description spec.description
+version spec.version
