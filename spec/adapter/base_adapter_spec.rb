@@ -14,26 +14,15 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 
-module Percolate
-  module Adapter
-    # A base class to build off of.
-    class BaseAdapter
-      # Loads entities in an adapter-specific way.
-      #
-      # @return [Hash] the loaded entities.
-      def load_entities
-        {}
-      end
+require "percolate/adapter/base_adapter"
 
-      # If the given method isn't found, check for a setter of the same name.
-      def method_missing(sym, *args, &block)
-        if sym[-1] != "="
-          sym_set = (sym.to_s + "=").to_sym
-          return send(sym_set, *args, &block) if respond_to?(sym_set)
-        end
+require "spec_helper"
 
-        super
-      end
-    end
+describe Percolate::Adapter::BaseAdapter do
+  it "invokes setter methods called without \"=\"" do
+    adapter = Percolate::Adapter::BaseAdapter.new
+    expect(adapter).to receive(:some_method=).with("some_value")
+
+    adapter.instance_eval { some_method "some_value" }
   end
 end

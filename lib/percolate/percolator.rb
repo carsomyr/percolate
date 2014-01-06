@@ -20,9 +20,10 @@ module Percolate
   # Creates a {Percolator} from the given adapter name.
   #
   # @param adapter_name [Symbol] the adapter name.
+  # @param block [Proc] the configuration block.
   #
   # @return [Percolator] the {Percolator}.
-  def self.create(adapter_name)
+  def self.create(adapter_name, &block)
     const_str = ActiveSupport::Inflector.camelize(adapter_name) + "Adapter"
 
     begin
@@ -31,18 +32,30 @@ module Percolate
       # Do nothing. Give the benefit of the doubt if the file doesn't exist.
     end if !Adapter.const_defined?(const_str)
 
-    Percolator.new(Adapter.const_get(const_str).new)
+    percolator = Percolator.new(Adapter.const_get(const_str).new)
+    percolator.load(&block)
+    percolator
   end
 
   # The class that percolates information from entities through facets to the user.
   class Percolator
-    attr_reader :adapter
+    attr_reader :adapter, :entities
 
     # The constructor.
     #
     # @param adapter [Object] the adapter to a data source.
     def initialize(adapter)
       @adapter = adapter
+    end
+
+    # Configures and loads the underlying adapter's entities.
+    #
+    # @param block [Proc] the configuration block.
+    def load(&block)
+      @adapter.instance_eval(&block) if !block.nil?
+      @entities = @adapter.load_entities
+
+      nil
     end
   end
 
