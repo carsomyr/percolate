@@ -61,5 +61,26 @@ describe Percolate::Adapter::ChefDataBagAdapter do
     it "reconstructs the entities data bag" do
       expect(@runner.node["testing"]["entities-all"]).to eq(@entities_data_bag)
     end
+
+    it "merges entity attributes found in separate data bag items" do
+      entities_merged = {
+          "org1" => {
+              "one" => {
+                  "fish" => true,
+                  "un" => true
+              },
+              "two" => "deux",
+              "red" => ["fish"],
+              "blue" => ["fish"],
+              "three" => ["trois"],
+              "four" => "quatre"
+          },
+          "org2" => {
+              "some_key" => "some_value"
+          }
+      }
+
+      expect(@runner.node["testing"]["entities-merged"]).to eq(entities_merged)
+    end
   end
 end

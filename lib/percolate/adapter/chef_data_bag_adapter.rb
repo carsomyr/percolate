@@ -15,11 +15,31 @@
 # the License.
 
 require "percolate/adapter/base_adapter"
+require "percolate/util"
 
 module Percolate
   module Adapter
     # An adapter for loading from Chef data bags.
     class ChefDataBagAdapter < BaseAdapter
+      attr_writer :entities_data_bag
+
+      def initialize(data_source)
+        super
+
+        @entities_data_bag = "entities"
+      end
+
+      def load_entities
+        @data_source.data_bag(@entities_data_bag).reduce({}) do |current, item_name|
+          content_hash = @data_source.data_bag_item(@entities_data_bag, item_name).raw_data["entities"]
+
+          if !content_hash.nil?
+            Percolate::Util.merge_attributes(current, content_hash)
+          else
+            {}
+          end
+        end
+      end
     end
   end
 end

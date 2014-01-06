@@ -18,6 +18,13 @@ module Percolate
   module Adapter
     # A base class to build off of.
     class BaseAdapter
+      # The constructor.
+      #
+      # @param data_source [Object] the data source.
+      def initialize(data_source = nil)
+        @data_source = data_source
+      end
+
       # Loads entities in an adapter-specific way.
       #
       # @return [Hash] the loaded entities.

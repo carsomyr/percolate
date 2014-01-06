@@ -17,13 +17,14 @@
 require "active_support/inflector"
 
 module Percolate
-  # Creates a {Percolator} from the given adapter name.
+  # Creates a {Percolator} from the given adapter name and data source.
   #
   # @param adapter_name [Symbol] the adapter name.
+  # @param data_source [Object] the data source.
   # @param block [Proc] the configuration block.
   #
   # @return [Percolator] the {Percolator}.
-  def self.create(adapter_name, &block)
+  def self.create(adapter_name, data_source = nil, &block)
     const_str = ActiveSupport::Inflector.camelize(adapter_name) + "Adapter"
 
     begin
@@ -32,7 +33,8 @@ module Percolate
       # Do nothing. Give the benefit of the doubt if the file doesn't exist.
     end if !Adapter.const_defined?(const_str)
 
-    percolator = Percolator.new(Adapter.const_get(const_str).new)
+    adapter = Adapter.const_get(const_str).new(data_source)
+    percolator = Percolator.new(adapter)
     percolator.load(&block)
     percolator
   end

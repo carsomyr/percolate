@@ -14,6 +14,8 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 
+percolator = Percolate.create(:chef_data_bag, self)
+
 node.default["testing"] = {}
 
 node.default["testing"]["entities-all"] = Hash[data_bag("entities").map do |item_name|
@@ -22,3 +24,5 @@ node.default["testing"]["entities-all"] = Hash[data_bag("entities").map do |item
 
   [item_name, content]
 end]
+
+node.default["testing"]["entities-merged"] = percolator.entities
