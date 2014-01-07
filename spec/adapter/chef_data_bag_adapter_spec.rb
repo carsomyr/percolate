@@ -83,4 +83,57 @@ describe Percolate::Adapter::ChefDataBagAdapter do
       expect(@runner.node["testing"]["entities-merged"]).to eq(entities_merged)
     end
   end
+
+  context "percolate-test::test_facets" do
+    before(:all) do
+      entities_data_bag = {
+          "item1" => {
+              "entities" => {
+                  "some_entity" => "some_value"
+              }
+          }
+      }
+
+      facets_data_bag = {
+          "item1" => {
+              "facets" => {
+                  "some_facet" => {
+                      "type" => "base",
+                      "attrs" => {
+                          "some_attr1" => "some_attr_value1"
+                      }
+                  }
+              }
+          },
+          "item2" => {
+              "facets" => {
+                  "some_facet" => {
+                      "type" => "base",
+                      "attrs" => {
+                          "some_attr2" => "some_attr_value2"
+                      }
+                  }
+              }
+          }
+      }
+
+      ChefSpec::Server.create_data_bag("entities", entities_data_bag)
+      ChefSpec::Server.create_data_bag("some_context", facets_data_bag)
+    end
+
+    it "merges facets found in separate data bag items" do
+      facet1 = double("facet1")
+      facet2 = double("facet2")
+      facet3 = double("facet3")
+      expect(facet1).to receive(:some_attr1=).with("some_attr_value1")
+      expect(facet2).to receive(:some_attr2=).with("some_attr_value2")
+      expect(facet1).to receive(:merge) { facet3 }.with(facet2)
+      expect(facet3).to receive(:find) { "some_entity" }
+
+      allow(Percolate::Facet::BaseFacet).to receive(:new).and_return(facet1, facet2)
+
+      runner = ChefSpec::Runner.new.converge(self.class.description)
+      expect(runner.node["testing"]["facets-merged"]).to eq("some_value")
+    end
+  end
 end
