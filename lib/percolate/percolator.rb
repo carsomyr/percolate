@@ -48,6 +48,7 @@ module Percolate
     # @param adapter [Object] the adapter to a data source.
     def initialize(adapter)
       @adapter = adapter
+      @facet_cache = {}
     end
 
     # Configures and loads the underlying adapter's entities.
@@ -59,9 +60,39 @@ module Percolate
 
       nil
     end
+
+    # Finds an entity.
+    #
+    # @param context [String] the lookup context.
+    # @param facet_name [Symbol] the facet name.
+    # @param args [Array] the argument splat passed to the facet.
+    #
+    # @return [Object] the retrieved entity.
+    def find(context, facet_name, *args)
+      cache_key = [context, facet_name]
+
+      if @facet_cache.include?(cache_key)
+        facet = @facet_cache[cache_key]
+      else
+        begin
+          require "percolate/facet/#{facet_name}_facet"
+        rescue LoadError
+          # Do nothing. Give the benefit of the doubt if the file doesn't exist.
+        end
+
+        facet = @adapter.load_facet(context, facet_name)
+        @facet_cache[cache_key] = facet
+      end
+
+      @entities[facet.find(*args)]
+    end
   end
 
   # The namespace for adapters.
   module Adapter
+  end
+
+  # The namespace for facets.
+  module Facet
   end
 end

@@ -14,6 +14,8 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 
+require "active_support/inflector"
+
 module Percolate
   module Adapter
     # A base class to build off of.
@@ -30,6 +32,47 @@ module Percolate
       # @return [Hash] the loaded entities.
       def load_entities
         {}
+      end
+
+      # Loads a facet.
+      #
+      # @param context [String] the lookup context.
+      # @param facet_name [Symbol] the facet name.
+      #
+      # @return [Object] the loaded facet.
+      def load_facet(context, facet_name)
+        create_facet(facet_name)
+      end
+
+      # Creates a facet from the given name.
+      #
+      # @param facet_name [Symbol] the facet name.
+      #
+      # @return [Object] the facet.
+      def create_facet(facet_name)
+        const_str = ActiveSupport::Inflector.camelize(facet_name) + "Facet"
+
+        begin
+          require "percolate/facet/#{facet_name}_facet"
+        rescue LoadError
+          # Do nothing. Give the benefit of the doubt if the file doesn't exist.
+        end if !Facet.const_defined?(const_str)
+
+        Facet.const_get(const_str).new
+      end
+
+      # Configures a facet according to the given attribute hash.
+      #
+      # @param facet [Object] the facet.
+      # @param attr_hash [Hash] the attribute hash.
+      #
+      # @return [Object] the facet.
+      def configure_facet(facet, attr_hash)
+        attr_hash.each_pair do |attr, value|
+          facet.send((attr + "=").to_sym, value)
+        end
+
+        facet
       end
 
       # If the given method isn't found, check for a setter of the same name.
