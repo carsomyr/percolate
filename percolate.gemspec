@@ -33,6 +33,11 @@ Gem::Specification.new do |s|
     " adapters for frameworks like Chef, with which the user can take full advantage of a declarative syntax for Chef" \
     " data bags and avoid the antipattern of representing initialization state with node attributes."
   s.add_runtime_dependency "activesupport", ">= 4.0.2"
+
+  if Gem::Version.new(RUBY_VERSION.dup) < Gem::Version.new("2.0.0")
+    s.add_runtime_dependency "backports", ">= 3.4.0"
+  end
+
   s.files = Pathname.glob("lib/**/*.rb").concat(Pathname.glob("bin/*")).map { |f| f.to_s }
   s.test_files = Pathname.glob("{features,spec,test}/*").map { |f| f.to_s }
   s.executables = Pathname.glob("bin/*").map { |f| f.basename.to_s }
