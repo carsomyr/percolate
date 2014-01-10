@@ -14,15 +14,11 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 
-include_recipe "percolate"
+spec = Gem::Specification.find_by_name("percolate")
 
-node.default["testing"] = {}
-
-node.default["testing"]["entities-all"] = Hash[data_bag("entities").map do |item_name|
-  content = data_bag_item("entities", item_name).raw_data
-  content.delete("id")
-
-  [item_name, content]
-end]
-
-node.default["testing"]["entities-merged"] = percolator.entities
+maintainer spec.authors.join(", ")
+maintainer_email spec.email.join(", ")
+license spec.licenses.join(", ")
+description spec.summary
+long_description spec.description
+version spec.version

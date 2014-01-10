@@ -22,3 +22,5 @@ license spec.licenses.join(", ")
 description "The Percolate test cookbook"
 long_description spec.description
 version spec.version
+
+depends "percolate"

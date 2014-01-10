@@ -68,6 +68,25 @@ module Percolate
           current.merge(other)
         end
       end
+
+      # Gets the given Chef node attribute value if it exists.
+      #
+      # @param node [Object] the Chef node.
+      # @param attribute_name [String] the attribute name.
+      # @param default_value [Object] the fallback value.
+      #
+      # @return [Object] the attribute value.
+      def self.percolate_value(node, attribute_name, default_value = nil)
+        attribute_name_upper = attribute_name.upcase
+
+        if const_defined?(attribute_name_upper)
+          const_get(attribute_name_upper)
+        elsif node.attribute?("percolate") && !node["percolate"][attribute_name].nil?
+          node["percolate"][attribute_name]
+        else
+          default_value
+        end
+      end
     end
   end
 end

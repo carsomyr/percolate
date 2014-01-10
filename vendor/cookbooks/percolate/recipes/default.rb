@@ -14,15 +14,16 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 
-include_recipe "percolate"
+gem_package "percolate"
 
-node.default["testing"] = {}
+require "percolate"
 
-node.default["testing"]["entities-all"] = Hash[data_bag("entities").map do |item_name|
-  content = data_bag_item("entities", item_name).raw_data
-  content.delete("id")
+chef_node = node
 
-  [item_name, content]
-end]
+percolator = Percolate.create(:chef_data_bag, self) do
+  entities_data_bag self.class.percolate_value(chef_node, "entities_data_bag", "entities")
+end
 
-node.default["testing"]["entities-merged"] = percolator.entities
+Chef::Recipe.send(:define_method, :percolator) do
+  percolator
+end
