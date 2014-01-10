@@ -69,6 +69,22 @@ module Percolate
     #
     # @return [Object] the retrieved entity or entities.
     def find(context, facet_name, *args)
+      result = find_facet(context, facet_name).find(*args)
+
+      if !result.is_a?(Array)
+        @entities[result]
+      else
+        result.map { |item| @entities[item] }
+      end
+    end
+
+    # Finds a facet.
+    #
+    # @param context [String] the lookup context.
+    # @param facet_name [Symbol] the facet name.
+    #
+    # @return [Object] the facet.
+    def find_facet(context, facet_name)
       cache_key = [context, facet_name]
 
       if @facet_cache.include?(cache_key)
@@ -84,13 +100,7 @@ module Percolate
         @facet_cache[cache_key] = facet
       end
 
-      result = facet.find(*args)
-
-      if !result.is_a?(Array)
-        @entities[result]
-      else
-        result.map { |item| @entities[item] }
-      end
+      facet
     end
   end
 
