@@ -8,16 +8,16 @@ information in node attributes.
 
 There are three core concepts to Percolate: entities, contexts, and facets.
 **Entities** are DRY sources of information retrieved by the library. For
-example, the two entities `my-org` and `their-org` below contain various
+example, the two entities `mine` and `theirs` below contain various
 configuration settings.
 
     "entities" => {
-        "my-org" => {
+        "mine" => {
             "aws_access_key" => "00000000000000000000",
             "aws_secret_key" => "0000000000000000000000000000000000000000",
             "aws_route53_zone_id" => "00000000000000"
         },
-        "their-org" => {
+        "theirs" => {
             "aws_route53_zone_id" => "11111111111111"
         }
     }
@@ -28,28 +28,26 @@ configuration settings.
 `aws-route53` context. Consequently, contexts may contain multiple **facets**,
 which are well-defined data mapping rules. For example, the `aws-keys` context
 may contain a `hostname` facet that says "when the organization part of the
-hostname (i.e., `domain` of `www.domain.com`) matches `their-org`, I actually
-intend to use the `my-org` entity's AWS keys".
+hostname (i.e., `domain` of `www.domain.com`) matches `theirs`, I actually
+intend to use the `mine` entity's AWS keys".
 
     "facets" => {
         "hostname" => {
             "attrs" => {
                 "organizations" => {
-                    "their-org" => "my-org"
+                    "theirs" => "mine"
                 }
             }
-        },
-        "some_other_facet" => {
         }
     }
 
 A **Percolator** is what binds entities, contexts, and facets together. Using
 the above snippets, invoking
 
-    percolator.find("aws-keys", :hostname, "www.their-org.com")
+    percolator.find("aws-keys", :hostname, "www.theirs.org")
 
-yields the `my-org` entity, a plausible scenario if you belong to `my-org` and
-are managing machines on behalf of `their-org`.
+yields the `mine` entity, a plausible scenario if you belong to `mine` and are
+managing machines on behalf of `theirs`.
 
 While we have designed Percolate to support different data sources through the
 adapter abstraction, currently only the `ChefDataBagAdapter` is supported. The
@@ -95,12 +93,12 @@ items `data_bag_item1` and `data_bag_item2`.
     {
         "id": "data_bag_item1",
         "entities": {
-            "my-org":
+            "mine":
                 "aws_access_key": "00000000000000000000",
                 "aws_secret_key": "0000000000000000000000000000000000000000",
                 "aws_route53_zone_id": "00000000000000"
             },
-            "my-org-testing": {
+            "mine-testing": {
                 "aws_access_key": "11111111111111111111",
                 "aws_secret_key": "1111111111111111111111111111111111111111"
             }
@@ -110,7 +108,7 @@ items `data_bag_item1` and `data_bag_item2`.
     {
         "id": "data_bag_item2",
         "entities": {
-            "their-org": {
+            "theirs": {
                 "aws_route53_zone_id": "11111111111111"
             }
         }
@@ -119,8 +117,8 @@ items `data_bag_item1` and `data_bag_item2`.
 Note that the `ChefDataBagAdapter` understands how to deep merge entity
 information declared over multiple data bag items, hence enabling a form of
 multitenancy whereby different users can contribute without conflict. For
-example, one could keep `my-org` and `their-org` entity information in separate
-files and upload them independently with `knife`.
+example, one could keep `mine` and `theirs` entity information in separate files
+and upload them independently with `knife`.
 
     $ knife data bag create -- entities
     $ knife data bag from file -- entities /path/to/data_bag_item1.json
@@ -142,10 +140,10 @@ Percolate **contexts** are data bags in and of themselves. A context (data bag)
                 "type": "hostname",
                 "attrs": {
                     "hostnames": {
-                        "testing.my-org.com": "my-org-testing"
+                        "testing.mine.org": "mine-testing"
                     },
                     "organizations": {
-                        "their-org": "my-org"
+                        "theirs": "mine"
                     }
                 }
             }
@@ -181,13 +179,13 @@ above examples.
 
     # The key info differs based on the hostname.
     #
-    # www.my-org.com:
+    # www.mine.org:
     #   access_key: 00000000000000000000
     #   secret_key: 0000000000000000000000000000000000000000
-    # www.their-org.com:
+    # www.theirs.org:
     #   access_key: 00000000000000000000
     #   secret_key: 0000000000000000000000000000000000000000
-    # testing.my-org.com:
+    # testing.mine.org:
     #   access_key: 11111111111111111111
     #   secret_key: 1111111111111111111111111111111111111111
 
@@ -220,15 +218,15 @@ The `hostname` facet maps parts of hostnames to entity names.
 
         facet = Percolate::Facet::HostnameFacet.new
         facet.hostnames = {
-            "testing.my-org.com" => "my-org-testing"
+            "testing.mine.org" => "mine-testing"
         }
         facet.organizations = {
-            "their-org" => "my-org"
+            "theirs" => "mine"
         }
 
-        expect(facet.find("testing.my-org.com")).to eq("my-org-testing")
-        expect(facet.find("www.their-org.com")).to eq("my-org")
-        expect(facet.find("dev.my-org.com")).to eq("my-org")
+        expect(facet.find("testing.mine.org")).to eq("mine-testing")
+        expect(facet.find("www.theirs.org")).to eq("mine")
+        expect(facet.find("dev.mine.com")).to eq("mine")
         expect(facet.find("www.some-org.com")).to eq("some-org")
 
 #### `fixture`
