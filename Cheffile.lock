@@ -1,12 +1,12 @@
 PATH
   remote: vendor/cookbooks/percolate
   specs:
-    percolate (0.9.0)
+    percolate (0.9.1)
 
 PATH
   remote: vendor/cookbooks/percolate-test
   specs:
-    percolate-test (0.9.0)
+    percolate-test (0.9.1)
       percolate (>= 0.0.0)
 
 DEPENDENCIES

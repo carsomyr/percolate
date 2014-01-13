@@ -303,6 +303,10 @@ accepts an attribute `attribute_name`, then it must have a setter named
 
 ### Version History
 
+**0.9.1** (Jan 13, 2014)
+
+* Fix the `percolate` cookbook.
+
 **0.9.0** (Jan 12, 2014)
 
 * Release the `percolate` gem and Chef cookbook.
