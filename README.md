@@ -9,19 +9,16 @@ information in node attributes.
 There are three core concepts to Percolate: entities, contexts, and facets.
 **Entities** are DRY sources of information retrieved by the library. For
 example, the two entities `mine` and `theirs` below contain various
-configuration settings.
+configuration settings in YAML.
 
-    "entities" => {
-        "mine" => {
-            "aws_access_key" => "00000000000000000000",
-            "aws_secret_key" => "0000000000000000000000000000000000000000",
-            "aws_route53_zone_id" => "00000000000000"
-        },
-        "theirs" => {
-            "aws_route53_zone_id" => "11111111111111"
-        }
-    }
-
+    ---
+    entities:
+      mine:
+        aws_access_key: 00000000000000000000
+        aws_secret_key: 0000000000000000000000000000000000000000
+        aws_route53_zone_id: 00000000000000
+      theirs:
+        aws_route53_zone_id: 11111111111111
 
 **Contexts** represent the type of information to retrieve. Specifying the
 `aws-keys` context during a lookup may yield different results from that of the
@@ -31,15 +28,12 @@ may contain a `hostname` facet that says "when the organization part of the
 hostname (i.e., `domain` of `www.domain.com`) matches `theirs`, I actually
 intend to use the `mine` entity's AWS keys".
 
-    "facets" => {
-        "hostname" => {
-            "attrs" => {
-                "organizations" => {
-                    "theirs" => "mine"
-                }
-            }
-        }
-    }
+    ---
+    facets:
+      hostname:
+        attrs:
+          organizations:
+            theirs: mine
 
 A **Percolator** is what binds entities, contexts, and facets together. Using
 the above snippets, invoking
@@ -88,31 +82,25 @@ This will ensure that a `Percolator` instance is initialized and available to
 all Chef recipes via the `percolator` instance method.
 
 **Entities** should be declared like so for a data bag named `entities` with
-items `data_bag_item1` and `data_bag_item2`.
+items `data_bag_item1` and `data_bag_item2` in YAML. (Pretend that it's JSON for
+Chef purposes.)
 
-    {
-        "id": "data_bag_item1",
-        "entities": {
-            "mine":
-                "aws_access_key": "00000000000000000000",
-                "aws_secret_key": "0000000000000000000000000000000000000000",
-                "aws_route53_zone_id": "00000000000000"
-            },
-            "mine-testing": {
-                "aws_access_key": "11111111111111111111",
-                "aws_secret_key": "1111111111111111111111111111111111111111"
-            }
-        }
-    }
+    ---
+    id: data_bag_item1
+    entities:
+      mine:
+        aws_access_key: 00000000000000000000
+        aws_secret_key: 0000000000000000000000000000000000000000
+        aws_route53_zone_id: 00000000000000
+      mine-testing:
+        aws_access_key: 11111111111111111111
+        aws_secret_key: 1111111111111111111111111111111111111111
 
-    {
-        "id": "data_bag_item2",
-        "entities": {
-            "theirs": {
-                "aws_route53_zone_id": "11111111111111"
-            }
-        }
-    }
+    ---
+    id: data_bag_item2
+    entities:
+      theirs:
+        aws_route53_zone_id: 11111111111111
 
 Note that the `ChefDataBagAdapter` understands how to deep merge entity
 information declared over multiple data bag items, hence enabling a form of
@@ -133,22 +121,16 @@ attribute.
 Percolate **contexts** are data bags in and of themselves. A context (data bag)
 `aws-keys` may contain **facet** declarations like so.
 
-    {
-        "id": "data_bag_item1",
-        "facets": {
-            "hostname_remap": {
-                "type": "hostname",
-                "attrs": {
-                    "hostnames": {
-                        "testing.mine.org": "mine-testing"
-                    },
-                    "organizations": {
-                        "theirs": "mine"
-                    }
-                }
-            }
-        }
-    }
+    ---
+    id: data_bag_item1
+    facets:
+      hostname_remap:
+        type: hostname
+        attrs:
+          hostnames:
+            testing.mine.org: mine-testing
+          organizations:
+            theirs: mine
 
 Three conventions are used in the above example.
 
@@ -179,10 +161,7 @@ above examples.
 
     # The key info differs based on the hostname.
     #
-    # www.mine.org:
-    #   access_key: 00000000000000000000
-    #   secret_key: 0000000000000000000000000000000000000000
-    # www.theirs.org:
+    # {www.mine.org, www.theirs.org}:
     #   access_key: 00000000000000000000
     #   secret_key: 0000000000000000000000000000000000000000
     # testing.mine.org:
