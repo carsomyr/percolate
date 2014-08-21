@@ -85,7 +85,7 @@ describe Percolate::Adapter::ChefDataBagAdapter do
   end
 
   context "percolate-test::test_facets" do
-    before(:all) do
+    it "merges facets found in separate data bag items" do
       entities_data_bag = {
           "item1" => {
               "entities" => {
@@ -119,9 +119,7 @@ describe Percolate::Adapter::ChefDataBagAdapter do
 
       ChefSpec::Server.create_data_bag("entities", entities_data_bag)
       ChefSpec::Server.create_data_bag("some_context", facets_data_bag)
-    end
 
-    it "merges facets found in separate data bag items" do
       facet1 = double("facet1")
       facet2 = double("facet2")
       facet3 = double("facet3")
