@@ -14,9 +14,9 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 
-site "http://community.opscode.com/api/v1"
+site "https://supermarket.getchef.com/api/v1"
 
 cookbook "percolate",
-         :path => "vendor/cookbooks/percolate"
+         path: "vendor/cookbooks/percolate"
 cookbook "percolate-test",
-         :path => "vendor/cookbooks/percolate-test"
+         path: "vendor/cookbooks/percolate-test"

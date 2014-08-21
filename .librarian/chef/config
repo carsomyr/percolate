@@ -1,0 +1,3 @@
+---
+LIBRARIAN_CHEF_PATH: cookbooks
+LIBRARIAN_CHEF_TMP: ".librarian/tmp/chef"
