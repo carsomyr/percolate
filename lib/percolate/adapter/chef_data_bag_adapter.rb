@@ -49,23 +49,19 @@ module Percolate
         facets = @data_source.data_bag(context).map do |item_name|
           facets_hash = @data_source.data_bag_item(context, item_name).raw_data["facets"]
 
-          if facets_hash.include?(name)
-            facet_hash = facets_hash[name]
-            facet_type = facet_hash.fetch("type", name)
-            facet_attrs = facet_hash.fetch("attrs", {})
+          facet_hash = facets_hash[name] || {}
+          facet_type = facet_hash.fetch("type", name)
+          facet_attrs = facet_hash.fetch("attrs", {})
 
-            configure_facet(create_facet(facet_type), facet_attrs)
-          else
-            nil
+          configure_facet(create_facet(facet_type), facet_attrs)
+        end
+
+        if facets.size > 0
+          facets[1...facets.size].reduce(facets[0]) do |current, other|
+            current.merge(other)
           end
-        end.select do |item|
-          !item.nil?
-        end.to_a
-
-        return nil if facets.empty?
-
-        facets[1...facets.size].reduce(facets[0]) do |current, other|
-          current.merge(other)
+        else
+          nil
         end
       end
 
