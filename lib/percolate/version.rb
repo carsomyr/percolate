@@ -24,7 +24,7 @@ module Percolate
     MINOR = 9
 
     # The patch version.
-    PATCH = 1
+    PATCH = 2
 
     # Gets the String representation of the gem version.
     def self.to_s

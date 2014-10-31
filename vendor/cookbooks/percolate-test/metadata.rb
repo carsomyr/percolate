@@ -14,13 +14,11 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 
-spec = Gem::Specification.find_by_name("percolate")
-
-maintainer spec.authors.join(", ")
-maintainer_email spec.email.join(", ")
-license spec.licenses.join(", ")
+maintainer "Roy Liu"
+maintainer_email "carsomyr@gmail.com"
+license "Apache-2.0"
 description "The Percolate test cookbook"
-long_description spec.description
-version spec.version
+long_description "The Percolate test cookbook."
+version "0.0.0"
 
 depends "percolate"

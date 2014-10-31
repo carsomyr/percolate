@@ -286,6 +286,10 @@ accepts an attribute `attribute_name`, then it must have a setter named
 
 ### Version History
 
+**0.9.2** (Oct 30, 2014)
+
+* Move the `#percolator` instance method from the `percolate::default` recipe to the `Percolate` library.
+
 **0.9.1** (Jan 13, 2014)
 
 * Fix the `percolate` cookbook.
