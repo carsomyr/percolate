@@ -53,9 +53,9 @@ describe Percolate::Adapter::ChefDataBagAdapter do
           }
       }
 
-      ChefSpec::Server.create_data_bag("entities", @entities_data_bag)
-
-      @runner = ChefSpec::Runner.new.converge(self.class.description)
+      @runner = ChefSpec::ServerRunner.new do |_, server|
+        server.create_data_bag("entities", @entities_data_bag)
+      end.converge(self.class.description)
     end
 
     it "reconstructs the entities data bag" do
@@ -117,9 +117,6 @@ describe Percolate::Adapter::ChefDataBagAdapter do
           }
       }
 
-      ChefSpec::Server.create_data_bag("entities", entities_data_bag)
-      ChefSpec::Server.create_data_bag("some_context", facets_data_bag)
-
       facet1 = double("facet1")
       facet2 = double("facet2")
       facet3 = double("facet3")
@@ -130,7 +127,11 @@ describe Percolate::Adapter::ChefDataBagAdapter do
 
       allow(Percolate::Facet::BaseFacet).to receive(:new).and_return(facet1, facet2)
 
-      runner = ChefSpec::Runner.new.converge(self.class.description)
+      runner = ChefSpec::ServerRunner.new do |_, server|
+        server.create_data_bag("entities", entities_data_bag)
+        server.create_data_bag("some_context", facets_data_bag)
+      end.converge(self.class.description)
+
       expect(runner.node["testing"]["facets-merged"]).to eq("some_value")
     end
   end

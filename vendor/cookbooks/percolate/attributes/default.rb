@@ -14,16 +14,4 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 
-chef_gem "percolate"
-
-require "percolate"
-
-chef_node = node
-
-percolator = Percolate.create(:chef_data_bag, self) do
-  entities_data_bag self.class.percolate_value(chef_node, "entities_data_bag", "entities")
-end
-
-Chef::Recipe.send(:define_method, :percolator) do
-  percolator
-end
+default["percolate"] = {}

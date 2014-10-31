@@ -76,10 +76,12 @@ adding the following line to your Chef cookbook's `metadata.rb`.
 Any recipe that uses the Chef data bag-based `Percolator` should have the
 following line.
 
-    include_recipe "percolate"
+    class << self
+      include Percolate
+    end
 
 This will ensure that a `Percolator` instance is initialized and available to
-all Chef recipes via the `percolator` instance method.
+all Chef recipes via the `#percolator` instance method.
 
 **Entities** should be declared like so for a data bag named `entities` with
 items `data_bag_item1` and `data_bag_item2` in YAML. (Pretend that it's JSON for
@@ -148,8 +150,10 @@ facets are responsible for handling merges with instances of their class.
 To put it all together, here is a Chef recipe fragment that synthesizes the
 above examples.
 
-    # Create a Percolator instance and expose it via the `percolator` getter.
-    include_recipe "percolate"
+    # Create a Percolator instance and expose it via the `#percolator` getter.
+    class << self
+      include Percolate
+    end
 
     # Assume that the Chef node name is the hostname.
     hostname = node.name

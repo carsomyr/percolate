@@ -14,7 +14,8 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 
-include_recipe "percolate"
+class << self
+  include Percolate
+end
 
-node.default["testing"] = {}
 node.default["testing"]["facets-merged"] = percolator.find("some_context", :some_facet)

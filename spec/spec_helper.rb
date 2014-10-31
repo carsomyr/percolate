@@ -16,6 +16,5 @@
 
 require "chefspec"
 require "chefspec/librarian"
-require "chefspec/server"
 
 require "percolate"

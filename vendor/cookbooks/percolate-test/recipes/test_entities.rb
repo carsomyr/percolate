@@ -14,9 +14,9 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 
-include_recipe "percolate"
-
-node.default["testing"] = {}
+class << self
+  include Percolate
+end
 
 node.default["testing"]["entities-all"] = Hash[data_bag("entities").map do |item_name|
   content = data_bag_item("entities", item_name).raw_data
