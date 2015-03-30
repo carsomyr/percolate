@@ -14,6 +14,7 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 
+name "percolate-test"
 maintainer "Roy Liu"
 maintainer_email "carsomyr@gmail.com"
 license "Apache-2.0"

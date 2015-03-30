@@ -16,6 +16,7 @@
 
 require "pathname"
 
+name "percolate"
 maintainer "Roy Liu"
 maintainer_email "carsomyr@gmail.com"
 license "Apache-2.0"
