@@ -22,4 +22,4 @@ maintainer_email "carsomyr@gmail.com"
 license "Apache-2.0"
 description "This cookbook accompanies the `percolate` gem"
 long_description Pathname.new("../README.md").expand_path(__FILE__).open { |f| f.read }
-version "0.9.2"
+version "0.9.4"

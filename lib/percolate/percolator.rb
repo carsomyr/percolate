@@ -69,12 +69,21 @@ module Percolate
     #
     # @return [Object] the retrieved entity or entities.
     def find(context, facet_name, *args)
-      result = find_facet(context, facet_name).find(*args)
+      facet = find_facet(context, facet_name)
 
-      if !result.is_a?(Array)
-        @entities[result]
-      else
+      if !facet
+        return nil
+      end
+
+      case result = facet.find(*args)
+      when Array
         result.map { |item| @entities[item] }
+      when String
+        @entities[result]
+      when NilClass
+        nil
+      else
+        raise "Bad facet return type #{result.class.name.dump}"
       end
     end
 
@@ -96,8 +105,9 @@ module Percolate
           # Do nothing. Give the benefit of the doubt if the file doesn't exist.
         end
 
-        facet = @adapter.load_facet(context, facet_name)
-        @facet_cache[cache_key] = facet
+        if facet = @adapter.load_facet(context, facet_name)
+          @facet_cache[cache_key] = facet
+        end
       end
 
       facet

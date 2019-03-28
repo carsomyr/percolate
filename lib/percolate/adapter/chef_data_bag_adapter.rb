@@ -32,28 +32,43 @@ module Percolate
       end
 
       def load_entities
-        @data_source.data_bag(@entities_data_bag).reduce({}) do |current, item_name|
-          content_hash = @data_source.data_bag_item(@entities_data_bag, item_name).raw_data["entities"]
-
-          if !content_hash.nil?
-            Percolate::Util.merge_attributes(current, content_hash)
-          else
-            {}
+        begin
+          @data_source.data_bag(@entities_data_bag).reduce({}) do |current, item_name|
+            Percolate::Util.merge_attributes(
+                current,
+                @data_source.data_bag_item(@entities_data_bag, item_name).raw_data["entities"] || {}
+            )
           end
+        rescue Net::HTTPServerException => e
+          # Reraise the exception if the status code isn't 404 Not Found.
+          if e.response.code != "404"
+            raise
+          end
+
+          nil
         end
       end
 
       def load_facet(context, name)
         name = name.to_s
 
-        facets = @data_source.data_bag(context).map do |item_name|
-          facets_hash = @data_source.data_bag_item(context, item_name).raw_data["facets"]
+        facets = begin
+          @data_source.data_bag(context).map do |item_name|
+            facets_hash = @data_source.data_bag_item(context, item_name).raw_data["facets"]
 
-          facet_hash = facets_hash[name] || {}
-          facet_type = facet_hash.fetch("type", name)
-          facet_attrs = facet_hash.fetch("attrs", {})
+            facet_hash = facets_hash[name] || {}
+            facet_type = facet_hash.fetch("type", name)
+            facet_attrs = facet_hash.fetch("attrs", {})
 
-          configure_facet(create_facet(facet_type), facet_attrs)
+            configure_facet(create_facet(facet_type), facet_attrs)
+          end
+        rescue Net::HTTPServerException => e
+          # Reraise the exception if the status code isn't 404 Not Found.
+          if e.response.code != "404"
+            raise
+          end
+
+          []
         end
 
         if facets.size > 0
